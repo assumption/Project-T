@@ -65,6 +65,21 @@ void mouseWheel(MouseEvent e)
   index %= inventory.size();
 }
 
+void keyPressed()
+{
+  if (keyCode == LEFT)
+  {
+    index -= 1;
+    if (index < 0) index += 5;
+    index %= inventory.size();
+  }
+  else if (keyCode == RIGHT)
+  {
+    index += 1;
+    index %= inventory.size();
+  }
+}
+
 void drawInventory()
 {
   fill(50,0,200,128);
