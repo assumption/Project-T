@@ -1,4 +1,5 @@
-Block[][] block;
+Block[][] blocks;
+Player player;
 
 //blocks available in inventory
 ArrayList<Block> inventory;
@@ -19,7 +20,7 @@ void setup() {
   blockLength = 20;
   playerHeight = 1.8 * blockLength;
   playerWidth = blockLength;
-  block = new Block[height / blockLength][width / blockLength]; 
+  blocks = new Block[height / blockLength][width / blockLength]; 
   background = loadImage("data/background.png");
   background.resize(width, height);
   
@@ -33,9 +34,8 @@ void setup() {
   inventory.add(new Block("wood",2));
   inventory.add(new Block("leaf",2));
   
-  loc = new PVector(width / 2, 0);
-  vel = new PVector(0, 0);
-  gravity = new PVector(0, 0.5);
+  player = new Player(new PVector(width/2,0), new PVector(playerWidth,playerHeight));
+  
   left = right = mouse1 = mouse2 = false;
 }
 
@@ -44,33 +44,36 @@ void draw()
   image(background, 0, 0);
   
   //draw the terrain
-  updateChar();
-  drawChar();
-  try {
-    if (block[int(loc.y / blockLength) + 2][int(loc.x / blockLength)] != null || block[int(loc.y / blockLength) + 2][int(loc.x / blockLength) + 1] != null) {
-      vel = new PVector(0, 0);
-      loc = new PVector(loc.x, blockLength * (int(loc.y / blockLength) + 2) - playerHeight);
-    }
-    if (block[int(loc.y / blockLength)][int(loc.x / blockLength)] != null || block[int(loc.y / blockLength) + 1][int(loc.x / blockLength)] != null) {
-      loc = new PVector(blockLength * int(loc.x / blockLength) + blockLength, loc.y);
-    }
-    if (block[int(loc.y / blockLength)][int(loc.x / blockLength) + 1] != null || block[int(loc.y / blockLength) + 1][int(loc.x / blockLength) + 1] != null) {
-      loc = new PVector(blockLength * int(loc.x / blockLength), loc.y);
-    }
-  } catch (Exception noExists) {}
-  if (mouse1) block[int(mouseY / blockLength)][int(mouseX / blockLength)] = new Block(inventory.get((int)index).getType());
-  else if (mouse2) block[int(mouseY / blockLength)][int(mouseX / blockLength)] = null;
-  for (int i = 0; i < block.length; i++) {
-    for (int j = 0; j < block[0].length; j++) {
-      try {
-        image(block[i][j].texture, j * blockLength, i * blockLength);
-        /*if (loc.y + playerHeight >= i * blockLength && !(loc.y > (i + 1) * blockLength) && ((loc.x > j * blockLength && loc.x < (j + 1) * blockLength) || (loc.x + playerWidth > j * blockLength && loc.x + playerWidth < (j + 1) * blockLength) || (loc.x == j * blockLength))) {
-          vel = new PVector(0, 0);
-          //loc = new PVector(loc.x, i * blockLength - playerHeight);
-        }*/
-      } catch (Exception noExists) {}
+  player.update();
+  player.draw();
+  
+  //block placement/destroy
+  if (mouse1)
+  {
+    PVector location = player.getLocation();
+    PVector hitbox = player.getHitbox();
+    int i0 = (int)location.x/blockLength;
+    int i1 = (int)(location.x+hitbox.x-1)/blockLength;
+    int j0 = (int)location.y/blockLength;
+    int j1 = (int)(location.y + hitbox.y/2-1)/blockLength;
+    int j2 = (int)(location.y + hitbox.y-1)/blockLength;
+    int mx = (int)mouseX/blockLength;
+    int my = (int)mouseY/blockLength;
+    boolean flag =  ((i0 == mx && (my == j0 || my == j1 || my == j2)) || (i1 == mx && (my == j0 || my == j1 || my == j2)));
+    if (!flag) blocks[my][mx] = new Block(inventory.get((int)index).getType());
+  }
+  else if (mouse2)
+  {
+    blocks[int(mouseY / blockLength)][int(mouseX / blockLength)] = null;
+  }
+  
+  //render blocks
+  for (int i = 0; i < blocks.length; i++) {
+    for (int j = 0; j < blocks[0].length; j++) {
+      if (blocks[i][j] != null) image(blocks[i][j].texture, j * blockLength, i * blockLength);
     } 
   }
+  
   //draw the inventory
   drawInventory();
 }
@@ -79,26 +82,11 @@ float distanceTo(float x1, float y1, float x2, float y2) {
   return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)); 
 }
 
-void updateChar() {
-  if (left) loc.add(new PVector(-2, 0));
-  else if (right) loc.add(new PVector(2, 0));
-  loc.add(vel);
-  vel.add(gravity);
-}
-
-void drawChar() {
-  pushMatrix();
-    translate(loc.x, loc.y);
-    fill(0);
-    rect(0, 0, playerWidth, playerHeight);
-  popMatrix();
-}
-
 void keyPressed() {
-  if (key == 'a') left = true;
-  else if (key == 'd') right = true;
-  else if (key == 'w' && vel.y == 0) vel.y = -10;
-  else if (key == CODED) {
+  if (key == 'a') player.setHSpeed(-2);
+  else if (key == 'd') player.setHSpeed(2);
+  if (key == 'w' && player.getVelocity().x == 0) player.setVSpeed(-10);
+  if (key == CODED) {
     if (keyCode == LEFT) {
       index -= 1;
       if (index < 0) index += 5;
@@ -106,17 +94,18 @@ void keyPressed() {
     } else if (keyCode == RIGHT) {
       index += 1;
       index %= inventory.size();
-    } else {
-      vel.y = 0;
-      loc.x = mouseX;
-      loc.y = mouseY;
+    } else if (keyCode == CONTROL) {
+      player.setVelocity(new PVector());
+      player.setLocation(new PVector(mouseX,mouseY));
     }
   }
 }
 
 void keyReleased() {
-  if (key == 'a') left = false;
-  else if (key == 'd') right = false;
+  if (key == 'a' || key == 'd')
+  {
+    player.setHSpeed(0);
+  }
 }
 
 void mousePressed() {
