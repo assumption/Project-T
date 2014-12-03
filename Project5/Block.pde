@@ -30,4 +30,9 @@ class Block {
   {
     return type;
   }
+  
+  PImage getTexture()
+  {
+    return texture;
+  }
 }

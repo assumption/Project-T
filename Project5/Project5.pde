@@ -1,5 +1,6 @@
 Block[][] blocks;
 Player player;
+ArrayList<ParticleSystem> systems;
 
 //blocks available in inventory
 ArrayList<Block> inventory;
@@ -49,8 +50,9 @@ void setup() {
     blocks[(int)(h-3)][i] = new Block("cobble");
     blocks[(int)(h-2)][i] = new Block("cobble");
     blocks[(int)(h-1)][i] = new Block("cobble");
-    
   }
+  
+  systems = new ArrayList<ParticleSystem>();
 }
 
 void draw()
@@ -84,7 +86,23 @@ void draw()
     int mx = (int)mouseX/blockLength;
     int my = (int)mouseY/blockLength;
     boolean flag = (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
-    if (!flag) blocks[my][mx] = null;
+    if (!flag) flag = flag || blocks[my][mx] == null;
+    if (!flag)
+    {
+      systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
+      blocks[my][mx] = null;
+    }
+  }
+  
+  //render block destroy particles
+  for (int i = systems.size()-1; i >= 0; i--)
+  {
+    ParticleSystem s = systems.get(i);
+    s.update();
+    if (s.isDead())
+    {
+      systems.remove(s);
+    }
   }
   
   //render blocks
@@ -165,7 +183,7 @@ void drawInventory()
   fill(50,0,200,128);
   noStroke();
   rect(blockLength/2,blockLength/2,2.2*blockLength*inventory.size() + 0.2*blockLength, 2.4*blockLength);
-  fill(255,50);
+  fill(255,75);
   rect(blockLength/2 + 2.2*blockLength*(int)index, blockLength/2, 2.4*blockLength, 2.4*blockLength);
   for (int i = 0; i < inventory.size(); i++)
   {
