@@ -64,6 +64,7 @@ void draw()
   //block placement/destroy
   if (mouse1)
   {
+    //place blocks, but make sure that they aren't placed on the character
     PVector location = player.getLocation();
     PVector hitbox = player.getHitbox();
     int i0 = (int)location.x/blockLength;
@@ -74,11 +75,16 @@ void draw()
     int mx = (int)mouseX/blockLength;
     int my = (int)mouseY/blockLength;
     boolean flag =  ((i0 == mx && (my == j0 || my == j1 || my == j2)) || (i1 == mx && (my == j0 || my == j1 || my == j2)));
+    flag = flag || (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
+    if (!flag) flag = blocks[my][mx] != null;
     if (!flag) blocks[my][mx] = new Block(inventory.get((int)index).getType());
   }
   else if (mouse2)
   {
-    blocks[int(mouseY / blockLength)][int(mouseX / blockLength)] = null;
+    int mx = (int)mouseX/blockLength;
+    int my = (int)mouseY/blockLength;
+    boolean flag = (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
+    if (!flag) blocks[my][mx] = null;
   }
   
   //render blocks
@@ -99,7 +105,20 @@ float distanceTo(float x1, float y1, float x2, float y2) {
 void keyPressed() {
   if (key == 'a') player.setHSpeed(-2);
   else if (key == 'd') player.setHSpeed(2);
-  if (key == 'w' && player.getVelocity().x == 0) player.setVSpeed(-10);
+  if (key == 'w')
+  {
+    PVector location = player.getLocation();
+    PVector hitbox = player.getHitbox();
+    int i0 = (int)location.x/blockLength;
+    int i1 = (int)(location.x+hitbox.x-1)/blockLength;
+    int j2 = (int)(location.y + hitbox.y)/blockLength;
+    if (j2 >= blocks.length || blocks[j2][i0] != null || blocks[j2][i1] != null)
+    {
+      player.setVSpeed(-5);
+      PVector loc = player.getLocation();
+      player.setLocation(new PVector(loc.x,loc.y-10));
+    }
+  }
   if (key == CODED) {
     if (keyCode == LEFT) {
       index -= 1;

@@ -56,6 +56,7 @@ class Player
     int j0 = (int)location.y/blockLength;
     int j1 = (int)(location.y + hitbox.y/2-1)/blockLength;
     int j2 = (int)(location.y + hitbox.y-1)/blockLength;
+    if (location.x < 0 || location.y < 0) return true;
     if (i0 < 0 || j0 < 0) return true;
     if (i1 >= blocks[0].length || j2 >= blocks.length) return true;
     return !(blocks[j0][i0] == null && blocks[j0][i1] == null && blocks[j1][i0] == null && blocks[j1][i1] == null && blocks[j2][i0] == null && blocks[j2][i1] == null);
@@ -80,6 +81,7 @@ class Player
   
   void setLocation(PVector loc)
   {
+    if (loc.x < 0 || loc.x + hitbox.x > width || loc.y < 0 || loc.y + hitbox.y > height) return;
     location = loc.get();
   }
   
