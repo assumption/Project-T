@@ -47,11 +47,15 @@ void draw()
   updateChar();
   drawChar();
   try {
+    if (block[int(loc.y / blockLength) + 2][int(loc.x / blockLength)] != null || block[int(loc.y / blockLength) + 2][int(loc.x / blockLength) + 1] != null) {
+      vel = new PVector(0, 0);
+      loc = new PVector(loc.x, blockLength * (int(loc.y / blockLength) + 2) - playerHeight);
+    }
     if (block[int(loc.y / blockLength)][int(loc.x / blockLength)] != null || block[int(loc.y / blockLength) + 1][int(loc.x / blockLength)] != null) {
       loc = new PVector(blockLength * int(loc.x / blockLength) + blockLength, loc.y);
     }
     if (block[int(loc.y / blockLength)][int(loc.x / blockLength) + 1] != null || block[int(loc.y / blockLength) + 1][int(loc.x / blockLength) + 1] != null) {
-      right = false;
+      loc = new PVector(blockLength * int(loc.x / blockLength), loc.y);
     }
   } catch (Exception noExists) {}
   if (mouse1) block[int(mouseY / blockLength)][int(mouseX / blockLength)] = new Block(inventory.get((int)index).getType());
@@ -60,9 +64,10 @@ void draw()
     for (int j = 0; j < block[0].length; j++) {
       try {
         image(block[i][j].texture, j * blockLength, i * blockLength);
-        if (loc.y + playerHeight >= i * blockLength && !(loc.y > (i + 1) * blockLength) && ((loc.x > j * blockLength && loc.x < (j + 1) * blockLength) || (loc.x + playerWidth > j * blockLength && loc.x + playerWidth < (j + 1) * blockLength) || (loc.x == j * blockLength))) {
+        /*if (loc.y + playerHeight >= i * blockLength && !(loc.y > (i + 1) * blockLength) && ((loc.x > j * blockLength && loc.x < (j + 1) * blockLength) || (loc.x + playerWidth > j * blockLength && loc.x + playerWidth < (j + 1) * blockLength) || (loc.x == j * blockLength))) {
           vel = new PVector(0, 0);
-        }
+          //loc = new PVector(loc.x, i * blockLength - playerHeight);
+        }*/
         if (left) loc.add(new PVector(-0.5, 0));
         else if (right) loc.add(new PVector(0.5, 0));
       } catch (Exception noExists) {}
@@ -98,10 +103,13 @@ void keyPressed() {
       index -= 1;
       if (index < 0) index += 5;
       index %= inventory.size();
-    }
-    else if (keyCode == RIGHT) {
+    } else if (keyCode == RIGHT) {
       index += 1;
       index %= inventory.size();
+    } else {
+      vel.y = 0;
+      loc.x = mouseX;
+      loc.y = mouseY;
     }
   }
 }
