@@ -13,7 +13,7 @@ PImage background;
 PVector loc;
 PVector vel;
 PVector gravity;
-boolean left, right, mouse1, mouse2;
+boolean mouse1, mouse2;
 
 void setup() {
   size(1000, 600);
@@ -33,10 +33,24 @@ void setup() {
   inventory.add(new Block("cobble",2));
   inventory.add(new Block("wood",2));
   inventory.add(new Block("leaf",2));
+  inventory.add(new Block("plank",2));
   
   player = new Player(new PVector(width/2,0), new PVector(playerWidth,playerHeight));
   
-  left = right = mouse1 = mouse2 = false;
+  mouse1 = mouse2 = false;
+  
+  //temp fill for terrain
+  int h = blocks.length;
+  
+  for (int i = 0; i < blocks[0].length; i++)
+  {
+    blocks[(int)(h-5)][i] = new Block("grass");
+    blocks[(int)(h-4)][i] = new Block("dirt");
+    blocks[(int)(h-3)][i] = new Block("cobble");
+    blocks[(int)(h-2)][i] = new Block("cobble");
+    blocks[(int)(h-1)][i] = new Block("cobble");
+    
+  }
 }
 
 void draw()
