@@ -68,8 +68,6 @@ void draw()
           vel = new PVector(0, 0);
           //loc = new PVector(loc.x, i * blockLength - playerHeight);
         }*/
-        if (left) loc.add(new PVector(-0.5, 0));
-        else if (right) loc.add(new PVector(0.5, 0));
       } catch (Exception noExists) {}
     } 
   }
@@ -82,6 +80,8 @@ float distanceTo(float x1, float y1, float x2, float y2) {
 }
 
 void updateChar() {
+  if (left) loc.add(new PVector(-2, 0));
+  else if (right) loc.add(new PVector(2, 0));
   loc.add(vel);
   vel.add(gravity);
 }
