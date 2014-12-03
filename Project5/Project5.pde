@@ -32,8 +32,6 @@ void setup() {
 void draw()
 {
   image(background, 0, 0);
-  //draw the inventory
-  drawInventory();
   
   //draw the terrain
   for (int i = 0; i < block.length; i++)
@@ -46,6 +44,9 @@ void draw()
          }
     } 
   }
+  
+  //draw the inventory
+  drawInventory();
 }
 
 void mousePressed() {
