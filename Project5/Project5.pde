@@ -46,6 +46,14 @@ void draw()
   //draw the terrain
   updateChar();
   drawChar();
+  try {
+    if (block[int(loc.y / blockLength)][int(loc.x / blockLength)] != null || block[int(loc.y / blockLength) + 1][int(loc.x / blockLength)] != null) {
+      loc = new PVector(blockLength * int(loc.x / blockLength) + blockLength, loc.y);
+    }
+    if (block[int(loc.y / blockLength)][int(loc.x / blockLength) + 1] != null || block[int(loc.y / blockLength) + 1][int(loc.x / blockLength) + 1] != null) {
+      right = false;
+    }
+  } catch (Exception noExists) {}
   if (mouse1) block[int(mouseY / blockLength)][int(mouseX / blockLength)] = new Block(inventory.get((int)index).getType());
   else if (mouse2) block[int(mouseY / blockLength)][int(mouseX / blockLength)] = null;
   for (int i = 0; i < block.length; i++) {
@@ -53,14 +61,10 @@ void draw()
       try {
         image(block[i][j].texture, j * blockLength, i * blockLength);
         if (loc.y + playerHeight >= i * blockLength && !(loc.y > (i + 1) * blockLength) && ((loc.x > j * blockLength && loc.x < (j + 1) * blockLength) || (loc.x + playerWidth > j * blockLength && loc.x + playerWidth < (j + 1) * blockLength) || (loc.x == j * blockLength))) {
-          //loc = new PVector(loc.x, i * blockLength - playerHeight);
           vel = new PVector(0, 0);
-          loc = new PVector(loc.x, i * blockLength - playerHeight);
         }
-        try {//buggy af
-          if (left && block[int(loc.y % 10) - 1][int(loc.x % 10) - 1] == null && block[int(loc.y % 10)][int(loc.x % 10) - 1] == null) loc.add(new PVector(-0.5, 0));
-        } catch (Exception noExists) {}
-        if (right) loc.add(new PVector(0.5, 0));
+        if (left) loc.add(new PVector(-0.5, 0));
+        else if (right) loc.add(new PVector(0.5, 0));
       } catch (Exception noExists) {}
     } 
   }
