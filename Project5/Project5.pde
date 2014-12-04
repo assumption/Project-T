@@ -4,7 +4,7 @@ ArrayList<ParticleSystem> systems;
 
 //blocks available in inventory
 ArrayList<Block> inventory;
-HashMap<String,Integer> blockCount;
+HashMap<String, Integer> blockCount;
 float index;
 
 int blockLength;
@@ -17,6 +17,8 @@ PVector vel;
 PVector gravity;
 boolean mouse1, mouse2, devMode;
 
+Table map;
+
 void setup() {
   size(1000, 600);
   blockLength = 20;
@@ -25,55 +27,61 @@ void setup() {
   blocks = new Block[height / blockLength][width / blockLength]; 
   background = loadImage("data/background.png");
   background.resize(width, height);
-  
+
   index = 0; //variable for selected block in inventory
-  
+
   //inventory arraylist
   inventory = new ArrayList();
-  inventory.add(new Block("grass",2));
-  inventory.add(new Block("dirt",2));
-  inventory.add(new Block("cobble",2));
-  inventory.add(new Block("wood",2));
-  inventory.add(new Block("leaf",2));
-  inventory.add(new Block("plank",2));
-  
+  inventory.add(new Block("grass", 2));
+  inventory.add(new Block("dirt", 2));
+  inventory.add(new Block("cobble", 2));
+  inventory.add(new Block("wood", 2));
+  inventory.add(new Block("leaf", 2));
+  inventory.add(new Block("plank", 2));
+
   //inventory count
-  blockCount = new HashMap<String,Integer>();
+  blockCount = new HashMap<String, Integer>();
   for (Block b : inventory)
   {
     blockCount.put(b.getType(), 0);
   }
-  
-  player = new Player(new PVector(width/2,0), new PVector(playerWidth,playerHeight));
-  
+
+  player = new Player(new PVector(width/2, 0), new PVector(playerWidth, playerHeight));
+
   mouse1 = mouse2 = false;
   devMode = true;
-  
+
   //temp fill for terrain
   int h = blocks.length;
-  
-  for (int i = 0; i < blocks[0].length; i++)
+
+  /*for (int i = 0; i < blocks[0].length; i++)
   {
     blocks[(int)(h-5)][i] = new Block("grass");
     blocks[(int)(h-4)][i] = new Block("dirt");
     blocks[(int)(h-3)][i] = new Block("cobble");
     blocks[(int)(h-2)][i] = new Block("cobble");
     blocks[(int)(h-1)][i] = new Block("cobble");
+  }*/
+
+  map = loadTable("input.csv", "header");
+
+  for (TableRow row : map.rows ()) {
+    if (row.getString("block") != null) blocks[row.getInt("y")][row.getInt("x")] = new Block(row.getString("block"));
   }
-  
-  generateTree(10,h-6);
-  
+
+  //generateTree(10, h-6);
+
   systems = new ArrayList<ParticleSystem>();
 }
 
 void draw()
 {
   image(background, 0, 0);
-  
+
   //draw the terrain
   player.update();
   player.draw();
-  
+
   //block placement/destroy
   if (devMode || distanceTo(mouseX, mouseY, player.getLocation().x + playerWidth / 2, player.getLocation().y + playerHeight / 2) < blockLength * 5) {
     if (mouse1)
@@ -98,8 +106,7 @@ void draw()
         blocks[my][mx] = new Block(type);
         if (!devMode) blockCount.put(type, (int)blockCount.get(type)-1);
       }
-    }
-    else if (mouse2)
+    } else if (mouse2)
     {
       int mx = (int)mouseX/blockLength;
       int my = (int)mouseY/blockLength;
@@ -115,7 +122,7 @@ void draw()
     }
   }
   //render block destroy particles
-  for (int i = systems.size()-1; i >= 0; i--)
+  for (int i = systems.size ()-1; i >= 0; i--)
   {
     ParticleSystem s = systems.get(i);
     s.update();
@@ -124,17 +131,17 @@ void draw()
       systems.remove(s);
     }
   }
-  
+
   //render blocks
   for (int i = 0; i < blocks.length; i++) {
     for (int j = 0; j < blocks[0].length; j++) {
       if (blocks[i][j] != null) image(blocks[i][j].texture, j * blockLength, i * blockLength);
-    } 
+    }
   }
-  
+
   //draw the inventory
   drawInventory();
-  
+
   if (devMode) {
     stroke(255, 0, 0);
     noFill();
@@ -144,13 +151,14 @@ void draw()
 }
 
 float distanceTo(float x1, float y1, float x2, float y2) {
-  return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)); 
+  return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
 
 void keyPressed() {
   if (key == 'a') player.setHSpeed(-2);
   else if (key == 'd') player.setHSpeed(2);
   if (key == '`') devMode = !devMode;
+  if (key == BACKSPACE) saveMap();
   if (key == 'w')
   {
     PVector location = player.getLocation();
@@ -173,9 +181,23 @@ void keyPressed() {
       index %= inventory.size();
     } else if (keyCode == CONTROL && devMode) {
       player.setVelocity(new PVector());
-      player.setLocation(new PVector(mouseX,mouseY));
+      player.setLocation(new PVector(mouseX, mouseY));
     }
   }
+}
+
+void saveMap() {
+  String temp = "y,x,block ";
+  for (int i = 0; i < blocks.length; i++) {
+    for (int j = 0; j < blocks[0].length; j++) {
+      if (blocks[i][j] != null) {
+        temp += (i + "," + j + "," + blocks[i][j].type + " ");
+      }
+    }
+  }
+  temp = temp.substring(0, temp.length() - 1);
+  String[] list = split(temp, ' ');
+  saveStrings("data/input.csv", list);
 }
 
 void keyReleased() {
@@ -191,8 +213,8 @@ void mousePressed() {
 }
 
 void mouseReleased() {
-   if (mouseButton == LEFT) mouse1 = false;
-   else if (mouseButton == RIGHT) mouse2 = false;
+  if (mouseButton == LEFT) mouse1 = false;
+  else if (mouseButton == RIGHT) mouse2 = false;
 }
 
 void mouseWheel(MouseEvent e)
@@ -206,25 +228,24 @@ void mouseWheel(MouseEvent e)
 
 void drawInventory()
 {
-  fill(50,0,200,128);
+  fill(50, 0, 200, 128);
   noStroke();
-  rect(blockLength/2,blockLength/2,2.2*blockLength*inventory.size() + 0.2*blockLength, 2.4*blockLength+16);
-  fill(255,75);
+  rect(blockLength/2, blockLength/2, 2.2*blockLength*inventory.size() + 0.2*blockLength, 2.4*blockLength+16);
+  fill(255, 75);
   rect(blockLength/2 + 2.2*blockLength*(int)index, blockLength/2, 2.4*blockLength, 2.4*blockLength);
   fill(255);
   textSize(10);
-  for (int i = 0; i < inventory.size(); i++)
+  for (int i = 0; i < inventory.size (); i++)
   {
     float x = blockLength/2 + 2.2*blockLength*i + 0.2*blockLength;
     float y = blockLength/2 + 0.2*blockLength;
     image(inventory.get(i).texture, x, y);
     if (blockCount.get(inventory.get(i).getType()) == 0)
     {
-      fill(0,128);
-      rect(x,y,inventory.get(i).texture.width,inventory.get(i).texture.height);
-      fill(255,128);
-    }
-    else
+      fill(0, 128);
+      rect(x, y, inventory.get(i).texture.width, inventory.get(i).texture.height);
+      fill(255, 128);
+    } else
     {
       fill(255);
     }
@@ -255,3 +276,4 @@ void generateTree(int x, int y)
   blocks[y-7][x] = new Block("leaf");
   blocks[y-7][x+1] = new Block("leaf");
 }
+
