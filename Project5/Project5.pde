@@ -15,7 +15,7 @@ PImage background;
 PVector loc;
 PVector vel;
 PVector gravity;
-boolean mouse1, mouse2;
+boolean mouse1, mouse2, devMode;
 
 void setup() {
   size(1000, 600);
@@ -49,6 +49,7 @@ void setup() {
   player = new Player(new PVector(width/2,0), new PVector(playerWidth,playerHeight));
   
   mouse1 = mouse2 = false;
+  devMode = true;
   
   //temp fill for terrain
   int h = blocks.length;
@@ -76,50 +77,51 @@ void draw()
   player.draw();
   
   //block placement/destroy
-  if (mouse1)
-  {
-    //place blocks, but make sure that they aren't placed on the character
-    PVector location = player.getLocation();
-    PVector hitbox = player.getHitbox();
-    int i0 = (int)location.x/blockLength;
-    int i1 = (int)(location.x+hitbox.x-1)/blockLength;
-    int j0 = (int)location.y/blockLength;
-    int j1 = (int)(location.y + hitbox.y/2-1)/blockLength;
-    int j2 = (int)(location.y + hitbox.y-1)/blockLength;
-    int mx = (int)mouseX/blockLength;
-    int my = (int)mouseY/blockLength;
-    boolean flag =  ((i0 == mx && (my == j0 || my == j1 || my == j2)) || (i1 == mx && (my == j0 || my == j1 || my == j2)));
-    flag = flag || (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
-    if (!flag) flag = blocks[my][mx] != null;
-    String type = inventory.get((int)index).getType();
-    if (!flag && (int)blockCount.get(type) != 0) 
+  if (devMode || distanceTo(mouseX, mouseY, player.getLocation().x + playerWidth / 2, player.getLocation().y + playerHeight / 2) < blockLength * 5) {
+    if (mouse1)
     {
-      PVector loc = player.getLocation();
-      if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
+      //place blocks, but make sure that they aren't placed on the character
+      PVector location = player.getLocation();
+      PVector hitbox = player.getHitbox();
+      int i0 = (int)location.x/blockLength;
+      int i1 = (int)(location.x+hitbox.x-1)/blockLength;
+      int j0 = (int)location.y/blockLength;
+      int j1 = (int)(location.y + hitbox.y/2-1)/blockLength;
+      int j2 = (int)(location.y + hitbox.y-1)/blockLength;
+      int mx = (int)mouseX/blockLength;
+      int my = (int)mouseY/blockLength;
+      boolean flag =  ((i0 == mx && (my == j0 || my == j1 || my == j2)) || (i1 == mx && (my == j0 || my == j1 || my == j2)));
+      flag = flag || (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
+      if (!flag) flag = blocks[my][mx] != null;
+      String type = inventory.get((int)index).getType();
+      if (!flag && (int)blockCount.get(type) != 0) 
       {
-        blocks[my][mx] = new Block(type);
-        blockCount.put(type, (int)blockCount.get(type)-1);
+        PVector loc = player.getLocation();
+        if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
+        {
+          blocks[my][mx] = new Block(type);
+          blockCount.put(type, (int)blockCount.get(type)-1);
+        }
+      }
+    }
+    else if (mouse2)
+    {
+      int mx = (int)mouseX/blockLength;
+      int my = (int)mouseY/blockLength;
+      boolean flag = (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
+      if (!flag) flag = flag || blocks[my][mx] == null;
+      if (!flag)
+      {
+        PVector loc = player.getLocation();
+        if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
+        {
+          systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
+          blockCount.put(blocks[my][mx].getType(), (int)blockCount.get(blocks[my][mx].getType())+1);
+          blocks[my][mx] = null;
+        }
       }
     }
   }
-  else if (mouse2)
-  {
-    int mx = (int)mouseX/blockLength;
-    int my = (int)mouseY/blockLength;
-    boolean flag = (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
-    if (!flag) flag = flag || blocks[my][mx] == null;
-    if (!flag)
-    {
-      PVector loc = player.getLocation();
-      if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
-      {
-        systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
-        blockCount.put(blocks[my][mx].getType(), (int)blockCount.get(blocks[my][mx].getType())+1);
-        blocks[my][mx] = null;
-      }
-    }
-  }
-  
   //render block destroy particles
   for (int i = systems.size()-1; i >= 0; i--)
   {
@@ -140,6 +142,13 @@ void draw()
   
   //draw the inventory
   drawInventory();
+  
+  if (devMode) {
+    stroke(255, 0, 0);
+    noFill();
+    rect(0, 0, width -1, height -1);
+    noStroke();
+  }
 }
 
 float distanceTo(float x1, float y1, float x2, float y2) {
@@ -149,6 +158,7 @@ float distanceTo(float x1, float y1, float x2, float y2) {
 void keyPressed() {
   if (key == 'a') player.setHSpeed(-2);
   else if (key == 'd') player.setHSpeed(2);
+  if (key == '`') devMode = !devMode;
   if (key == 'w')
   {
     PVector location = player.getLocation();
@@ -169,7 +179,7 @@ void keyPressed() {
     } else if (keyCode == RIGHT) {
       index += 1;
       index %= inventory.size();
-    } else if (keyCode == CONTROL) {
+    } else if (keyCode == CONTROL && devMode) {
       player.setVelocity(new PVector());
       player.setLocation(new PVector(mouseX,mouseY));
     }
