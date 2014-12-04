@@ -12,7 +12,7 @@ class Particle
     velocity = new PVector(0,0);
     acceleration = new PVector(0,.5);
     drawColor = c;
-    life = 10;
+    life = 10 + (int)random(6)-3;
   }
   
   void update()
@@ -27,7 +27,7 @@ class Particle
     pushMatrix();
       translate(location.x,location.y);
       noStroke();
-      fill(drawColor,175);
+      fill(drawColor,(life > 3 ? 175 : life*175/3));
       rect(-1,-1,2,2);
     popMatrix();
   }

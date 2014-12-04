@@ -132,9 +132,7 @@ void keyPressed() {
     int j2 = (int)(location.y + hitbox.y)/blockLength;
     if (j2 >= blocks.length || blocks[j2][i0] != null || blocks[j2][i1] != null)
     {
-      player.setVSpeed(-5);
-      PVector loc = player.getLocation();
-      player.setLocation(new PVector(loc.x,loc.y-10));
+      player.setVSpeed(-7);
     }
   }
   if (key == CODED) {
