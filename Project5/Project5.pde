@@ -62,6 +62,8 @@ void setup() {
     blocks[(int)(h-1)][i] = new Block("cobble");
   }
   
+  generateTree(10,h-6);
+  
   systems = new ArrayList<ParticleSystem>();
 }
 
@@ -92,8 +94,12 @@ void draw()
     String type = inventory.get((int)index).getType();
     if (!flag && (int)blockCount.get(type) != 0) 
     {
-      blocks[my][mx] = new Block(type);
-      blockCount.put(type, (int)blockCount.get(type)-1);
+      PVector loc = player.getLocation();
+      if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
+      {
+        blocks[my][mx] = new Block(type);
+        blockCount.put(type, (int)blockCount.get(type)-1);
+      }
     }
   }
   else if (mouse2)
@@ -104,9 +110,13 @@ void draw()
     if (!flag) flag = flag || blocks[my][mx] == null;
     if (!flag)
     {
-      systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
-      blockCount.put(blocks[my][mx].getType(), (int)blockCount.get(blocks[my][mx].getType())+1);
-      blocks[my][mx] = null;
+      PVector loc = player.getLocation();
+      if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
+      {
+        systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
+        blockCount.put(blocks[my][mx].getType(), (int)blockCount.get(blocks[my][mx].getType())+1);
+        blocks[my][mx] = null;
+      }
     }
   }
   
@@ -218,4 +228,28 @@ void drawInventory()
     }
     text(blockCount.get(inventory.get(i).getType()), x, y + 2.4*blockLength + 6);
   }
+}
+
+void generateTree(int x, int y)
+{
+  blocks[y][x] = new Block("wood");
+  blocks[y-1][x] = new Block("wood");
+  blocks[y-2][x] = new Block("wood");
+  blocks[y-3][x] = new Block("wood");
+  blocks[y-4][x-2] = new Block("leaf");
+  blocks[y-4][x-1] = new Block("leaf");
+  blocks[y-4][x] = new Block("wood");
+  blocks[y-4][x+1] = new Block("leaf");
+  blocks[y-4][x+2] = new Block("leaf");
+  blocks[y-5][x-2] = new Block("leaf");
+  blocks[y-5][x-1] = new Block("leaf");
+  blocks[y-5][x] = new Block("wood");
+  blocks[y-5][x+1] = new Block("leaf");
+  blocks[y-5][x+2] = new Block("leaf");
+  blocks[y-6][x-1] = new Block("leaf");
+  blocks[y-6][x] = new Block("leaf");
+  blocks[y-6][x+1] = new Block("leaf");
+  blocks[y-7][x-1] = new Block("leaf");
+  blocks[y-7][x] = new Block("leaf");
+  blocks[y-7][x+1] = new Block("leaf");
 }
