@@ -4,6 +4,7 @@ ArrayList<ParticleSystem> systems;
 
 //blocks available in inventory
 ArrayList<Block> inventory;
+HashMap<String,Integer> blockCount;
 float index;
 
 int blockLength;
@@ -35,6 +36,15 @@ void setup() {
   inventory.add(new Block("wood",2));
   inventory.add(new Block("leaf",2));
   inventory.add(new Block("plank",2));
+  
+  //inventory count
+  blockCount = new HashMap<String,Integer>();
+  for (Block b : inventory)
+  {
+    blockCount.put(b.getType(), 0);
+  }
+  
+  blockCount.put("plank", -1);
   
   player = new Player(new PVector(width/2,0), new PVector(playerWidth,playerHeight));
   
@@ -79,7 +89,12 @@ void draw()
     boolean flag =  ((i0 == mx && (my == j0 || my == j1 || my == j2)) || (i1 == mx && (my == j0 || my == j1 || my == j2)));
     flag = flag || (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
     if (!flag) flag = blocks[my][mx] != null;
-    if (!flag) blocks[my][mx] = new Block(inventory.get((int)index).getType());
+    String type = inventory.get((int)index).getType();
+    if (!flag && (int)blockCount.get(type) != 0) 
+    {
+      blocks[my][mx] = new Block(type);
+      blockCount.put(type, (int)blockCount.get(type)-1);
+    }
   }
   else if (mouse2)
   {
@@ -90,6 +105,7 @@ void draw()
     if (!flag)
     {
       systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
+      blockCount.put(blocks[my][mx].getType(), (int)blockCount.get(blocks[my][mx].getType())+1);
       blocks[my][mx] = null;
     }
   }
@@ -180,11 +196,26 @@ void drawInventory()
 {
   fill(50,0,200,128);
   noStroke();
-  rect(blockLength/2,blockLength/2,2.2*blockLength*inventory.size() + 0.2*blockLength, 2.4*blockLength);
+  rect(blockLength/2,blockLength/2,2.2*blockLength*inventory.size() + 0.2*blockLength, 2.4*blockLength+16);
   fill(255,75);
   rect(blockLength/2 + 2.2*blockLength*(int)index, blockLength/2, 2.4*blockLength, 2.4*blockLength);
+  fill(255);
+  textSize(10);
   for (int i = 0; i < inventory.size(); i++)
   {
-    image(inventory.get(i).texture, blockLength/2 + 2.2*blockLength*i + 0.2*blockLength, blockLength/2 + 0.2*blockLength);
+    float x = blockLength/2 + 2.2*blockLength*i + 0.2*blockLength;
+    float y = blockLength/2 + 0.2*blockLength;
+    image(inventory.get(i).texture, x, y);
+    if (blockCount.get(inventory.get(i).getType()) == 0)
+    {
+      fill(0,128);
+      rect(x,y,inventory.get(i).texture.width,inventory.get(i).texture.height);
+      fill(255,128);
+    }
+    else
+    {
+      fill(255);
+    }
+    text(blockCount.get(inventory.get(i).getType()), x, y + 2.4*blockLength + 6);
   }
 }
