@@ -97,11 +97,11 @@ void draw()
       if (!flag && (int)blockCount.get(type) != 0) 
       {
         PVector loc = player.getLocation();
-        if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
-        {
+        //if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
+       // {
           blocks[my][mx] = new Block(type);
           blockCount.put(type, (int)blockCount.get(type)-1);
-        }
+        //}
       }
     }
     else if (mouse2)
@@ -113,12 +113,12 @@ void draw()
       if (!flag)
       {
         PVector loc = player.getLocation();
-        if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
-        {
+        //if (sqrt(sq((loc.x+blockLength/2)-mouseX) + sq((loc.y+.9*blockLength)-mouseY)) < 5*blockLength)
+        //{
           systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
           blockCount.put(blocks[my][mx].getType(), (int)blockCount.get(blocks[my][mx].getType())+1);
           blocks[my][mx] = null;
-        }
+        //}
       }
     }
   }
