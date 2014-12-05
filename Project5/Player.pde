@@ -62,6 +62,8 @@ class Player
     float xVel = velocity.x;
     float yVel = velocity.y;
     location.x += xVel;
+    if (xVel > 0) animateCR();
+    else if (xVel < 0) animateCL();
     if (collided() && xVel != 0)
     {
       xVel = xVel/abs(xVel);
@@ -89,7 +91,7 @@ class Player
     pushMatrix();
       pushMatrix();
       translate(location.x+blockLength/2, location.y+blockLength/4);
-      scale(.4);
+      scale(.35);
       //back leg
       pushMatrix();
         translate(2, 62);
@@ -160,6 +162,116 @@ class Player
     if (i0 < 0 || j0 < 0) return true;
     if (i1 >= blocks[0].length || j2 >= blocks.length) return true;
     return !(blocks[j0][i0] == null && blocks[j0][i1] == null && blocks[j1][i0] == null && blocks[j1][i1] == null && blocks[j2][i0] == null && blocks[j2][i1] == null);
+  }
+  
+  //walks right
+  void animateCR()
+  {
+    //front arm animates
+    if (frontA < -1) {
+      armsMove = true;
+    } else if (frontA > 0) {
+      armsMove = false;
+    }
+  
+    if (armsMove) {
+      frontA += .03;
+    } else {
+      frontA -= .03;
+    }
+  
+    //back arm animates
+    if (backA > 0) {
+      armsMove = true;
+    } else if (backA < -1) {
+      armsMove = false;
+    }
+  
+    if (armsMove) {
+      backA -= .02;
+    } else {
+      backA += .02;
+    }
+  
+    //front legs animate
+    if (frontL < -1) {
+      legsMove = true;
+    } else if (frontL > .4) {
+      legsMove = false;
+    }
+    if (legsMove) {
+      frontL += .04;
+    } else {
+      frontL -= .04;
+    }
+  
+    //back arm animates
+    if (backL > .4) {
+      feetsMove = true;
+    } else if (backL < -1) {
+      feetsMove = false;
+    }
+  
+    if (feetsMove) {
+      backL -= .038;
+    } else {
+      backL += .039;
+    }
+  }
+
+  //walks left
+  void animateCL()
+  {
+    //front arm animates
+    if (frontA < -1) {
+      armsMove = true;
+    } else if (frontA > 0) {
+      armsMove = false;
+    }
+  
+    if (armsMove) {
+      frontA += .03;
+    } else {
+      frontA -= .03;
+    }
+  
+    //back arm animates
+    if (backA > 0) {
+      armsMove = true;
+    } else if (backA < -1) {
+      armsMove = false;
+    }
+  
+    if (armsMove) {
+      backA -= .02;
+    } else {
+      backA += .02;
+    }
+  
+    //front legs animate
+    if (frontL < -1) {
+      legsMove = true;
+    } else if (frontL > .4) {
+      legsMove = false;
+    }
+    if (legsMove) {
+      frontL += .04;
+    } else {
+      frontL -= .04;
+    }
+  
+    //back arm animates
+    if (backL > .4) {
+      feetsMove = true;
+    } else if (backL < -1) {
+      feetsMove = false;
+    }
+  
+    if (feetsMove) {
+      backL -= .038;
+    } else {
+      backL += .038;
+    }
   }
   
   //getters and setters
