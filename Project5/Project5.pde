@@ -4,6 +4,8 @@ Block[][] blocks;
 Player player;
 ArrayList<ParticleSystem> systems;
 
+ArrayList<Snow> snow;
+
 //blocks available in inventory
 ArrayList<Block> inventory;
 HashMap<String, Integer> blockCount;
@@ -21,7 +23,7 @@ boolean mouse1, mouse2, devMode;
 
 Table map;
 
-int gameScreen;
+int gameScreen, lastSong;
 
 Minim minim;
 AudioPlayer main, bgmusic1, bgmusic2, bgmusic3;
@@ -34,6 +36,8 @@ void setup() {
   blocks = new Block[height / blockLength][width / blockLength]; 
   background = loadImage("data/background.png");
   background.resize(width, height);
+  
+  snow = new ArrayList<Snow>();
   
   titleScreen = loadImage("data/titleScreen.png");
   titleScreen.resize(1000, 600);
@@ -53,6 +57,7 @@ void setup() {
   
   gameScreen = 0; //menu screen
   index = 0; //variable for selected block in inventory
+  lastSong = 0;
 
   //inventory arraylist
   inventory = new ArrayList();
@@ -73,7 +78,7 @@ void setup() {
   player = new Player(new PVector(0, 0), new PVector(playerWidth, playerHeight));
 
   mouse1 = mouse2 = false;
-  devMode = true;
+  devMode = false;
 
   map = loadTable("input.csv", "header");
 
@@ -92,14 +97,50 @@ void draw()
        image(playButton2, width / 2 - 100, height / 2 - 75);
      } else image(playButton, width / 2 - 100, height / 2 - 75);
      main.play();
-  } else if (gameScreen == 3)
-  {
+  } else if (gameScreen == 3) {
+    snow.add(new Snow(new PVector(random(width), random(-10, 0))));
+    if (!bgmusic1.isPlaying() && !bgmusic2.isPlaying() && !bgmusic3.isPlaying()) {
+      if (lastSong == 1) {
+        float rand = random(0, 2);
+        if (rand < 1) {
+          bgmusic2.play();
+          lastSong = 2;
+        } else {
+          bgmusic3.play();
+          lastSong = 3; 
+        }
+      } else if (lastSong == 2) {
+        float rand = random(0, 2);
+        if (rand < 1) {
+          bgmusic1.play();
+          lastSong = 1;
+        } else {
+          bgmusic3.play();
+          lastSong = 3; 
+        }
+      } else if (lastSong == 3) {
+        float rand = random(0, 2);
+        if (rand < 1) {
+          bgmusic1.play();
+          lastSong = 1;
+        } else {
+          bgmusic2.play();
+          lastSong = 2; 
+        }
+      }
+    }
     image(background, 0, 0);
   
     //draw the terrain
     player.update();
     player.draw();
-  
+    
+    for (int i = snow.size() - 1; i >= 0; i--) {
+      snow.get(i).render();
+      snow.get(i).update();
+      if (snow.get(i).collided()) snow.remove(i);
+    }
+    
     //block placement/destroy
     if (devMode || distanceTo(mouseX, mouseY, player.getLocation().x + playerWidth / 2, player.getLocation().y + playerHeight / 2) < blockLength * 5) {
       if (mouse1)
@@ -154,8 +195,7 @@ void draw()
     for (int i = 0; i < blocks.length; i++) {
       for (int j = 0; j < blocks[0].length; j++) {
         if (blocks[i][j] != null) {
-          if (blocks[i][j].type.equals("dirt") && millis() - blocks[i][j].life > blocks[i][j].conversionTime && i != 0 && blocks[i - 1][j] == null) blocks[i][j].texture = grass;
-          else if (blocks[i][j].type.equals("dirt") && millis() - blocks[i][j].life > blocks[i][j].conversionTime && i == 0) blocks[i][j].texture = grass;
+          if (blocks[i][j].type.equals("dirt") && blocks[i][j].snowCount > 20) blocks[i][j].texture = grass;
           image(blocks[i][j].texture, j * blockLength, i * blockLength);
         }
       }
@@ -259,9 +299,16 @@ void mousePressed() {
       gameScreen = 3;
       main.close();
       float rand = random(0, 3);
-      if (rand < 1) bgmusic1.play();
-      else if (rand < 2) bgmusic2.play();
-      else bgmusic3.play();
+      if (rand < 1) {
+        bgmusic1.play();
+        lastSong = 1;
+      } else if (rand < 2) {
+        bgmusic2.play();
+        lastSong = 2;
+      } else {
+        bgmusic3.play();
+        lastSong = 3;
+      }
     }
   } else if (gameScreen == 3) {
     if (mouseButton == LEFT) mouse1 = true;
