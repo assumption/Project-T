@@ -8,7 +8,7 @@ class Player
   
   Player(PVector loc, PVector box)
   { 
-    facingLeft = true;
+    facingLeft = false;
     location = loc.get();
     hitbox = box.get();
     velocity = new PVector(0,0);

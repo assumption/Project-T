@@ -67,7 +67,7 @@ void setup() {
     blockCount.put(b.getType(), 0);
   }
 
-  player = new Player(new PVector(width/2, 0), new PVector(playerWidth, playerHeight));
+  player = new Player(new PVector(0, 0), new PVector(playerWidth, playerHeight));
 
   mouse1 = mouse2 = false;
   devMode = true;
