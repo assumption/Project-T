@@ -1,3 +1,15 @@
+/* ==============================
+ * CPE 123 SECTION 17 J. WORKMAN
+ *
+ * CREATED BY:
+ *   ALEXANDER CHAMBERLAIN
+ *   CARTER VAN DEUREN
+ *   JAMES YANG
+ *
+ * BLOCK TEXTURES TAKEN FROM MINECRAFT
+ *
+ * MUSIC TAKEN FROM FASTER THAN LIGHT
+ * ==============================*/
 import ddf.minim.*;
 
 Block[][] blocks;
