@@ -256,9 +256,10 @@ void mousePressed() {
       else if (rand < 2) bgmusic2.play();
       else bgmusic3.play();
     }
+  } else if (gameScreen == 3) {
+    if (mouseButton == LEFT) mouse1 = true;
+    else if (mouseButton == RIGHT) mouse2 = true;
   }
-  if (mouseButton == LEFT) mouse1 = true;
-  else if (mouseButton == RIGHT) mouse2 = true;
 }
 
 void mouseReleased() {
