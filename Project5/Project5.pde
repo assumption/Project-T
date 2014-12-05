@@ -1,3 +1,5 @@
+import ddf.minim.*;
+
 Block[][] blocks;
 Player player;
 ArrayList<ParticleSystem> systems;
@@ -10,7 +12,7 @@ float index;
 int blockLength;
 float playerHeight;
 int playerWidth;
-PImage background;
+PImage background, titleScreen, playButton, playButton2;
 
 PVector loc;
 PVector vel;
@@ -21,6 +23,9 @@ Table map;
 
 int gameScreen;
 
+Minim minim;
+AudioPlayer main, bgmusic1, bgmusic2, bgmusic3;
+
 void setup() {
   size(1000, 600);
   blockLength = 20;
@@ -29,7 +34,20 @@ void setup() {
   blocks = new Block[height / blockLength][width / blockLength]; 
   background = loadImage("data/background.png");
   background.resize(width, height);
-
+  
+  titleScreen = loadImage("data/titleScreen.png");
+  titleScreen.resize(1000, 600);
+  playButton = loadImage("data/playButton.png");
+  playButton.resize(200, 150);
+  playButton2 = loadImage("data/playButton2.png");
+  playButton2.resize(200, 150);
+  
+  minim = new Minim(this);
+  main = minim.loadFile("data/mainmenu.wav");
+  bgmusic1 = minim.loadFile("data/gameplay1.wav");
+  bgmusic2 = minim.loadFile("data/gameplay2.wav");
+  bgmusic3 = minim.loadFile("data/gameplay3.wav");
+  
   gameScreen = 0; //menu screen
   index = 0; //variable for selected block in inventory
 
@@ -53,7 +71,6 @@ void setup() {
 
   mouse1 = mouse2 = false;
   devMode = true;
-  gameScreen = 3; //set it to ingame screen
 
   map = loadTable("input.csv", "header");
 
@@ -65,8 +82,14 @@ void setup() {
 }
 
 void draw()
-{
-  if (gameScreen == 3)
+{ 
+  if (gameScreen == 0) {
+     image(titleScreen, 0, 0);
+     if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100 && mouseY > height / 2 - 75 && mouseY < height / 2 + 75) {
+       image(playButton2, width / 2 - 100, height / 2 - 75);
+     } else image(playButton, width / 2 - 100, height / 2 - 75);
+     main.play();
+  } else if (gameScreen == 3)
   {
     image(background, 0, 0);
   
@@ -224,6 +247,16 @@ void keyReleased() {
 }
 
 void mousePressed() {
+  if (gameScreen == 0) {
+    if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100 && mouseY > height / 2 - 75 && mouseY < height / 2 + 75) {
+      gameScreen = 3;
+      main.close();
+      float rand = random(0, 3);
+      if (rand < 1) bgmusic1.play();
+      else if (rand < 2) bgmusic2.play();
+      else bgmusic3.play();
+    }
+  }
   if (mouseButton == LEFT) mouse1 = true;
   else if (mouseButton == RIGHT) mouse2 = true;
 }
