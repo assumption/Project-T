@@ -197,7 +197,7 @@ void keyPressed() {
     if (key == CODED) {
       if (keyCode == LEFT) {
         index -= 1;
-        if (index < 0) index += 5;
+        if (index < 0) index += 6;
         index %= inventory.size();
       } else if (keyCode == RIGHT) {
         index += 1;
