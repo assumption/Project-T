@@ -175,9 +175,9 @@ class Player
     }
   
     if (armsMove) {
-      frontA += .03;
+      frontA += .06;
     } else {
-      frontA -= .03;
+      frontA -= .06;
     }
   
     //back arm animates
@@ -188,9 +188,9 @@ class Player
     }
   
     if (armsMove) {
-      backA -= .02;
+      backA -= .04;
     } else {
-      backA += .02;
+      backA += .04;
     }
   
     //front legs animate
@@ -200,9 +200,9 @@ class Player
       legsMove = false;
     }
     if (legsMove) {
-      frontL += .04;
+      frontL += .08;
     } else {
-      frontL -= .04;
+      frontL -= .08;
     }
   
     //back arm animates
@@ -213,9 +213,9 @@ class Player
     }
   
     if (feetsMove) {
-      backL -= .038;
+      backL -= .076;
     } else {
-      backL += .039;
+      backL += .076;
     }
   }
 
@@ -230,9 +230,9 @@ class Player
     }
   
     if (armsMove) {
-      frontA += .03;
+      frontA += .06;
     } else {
-      frontA -= .03;
+      frontA -= .06;
     }
   
     //back arm animates
@@ -243,9 +243,9 @@ class Player
     }
   
     if (armsMove) {
-      backA -= .02;
+      backA -= .04;
     } else {
-      backA += .02;
+      backA += .04;
     }
   
     //front legs animate
@@ -255,9 +255,9 @@ class Player
       legsMove = false;
     }
     if (legsMove) {
-      frontL += .04;
+      frontL += .08;
     } else {
-      frontL -= .04;
+      frontL -= .08;
     }
   
     //back arm animates
@@ -268,9 +268,9 @@ class Player
     }
   
     if (feetsMove) {
-      backL -= .038;
+      backL -= .074;
     } else {
-      backL += .038;
+      backL += .074;
     }
   }
   
