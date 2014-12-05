@@ -8,6 +8,8 @@
  *
  * BLOCK TEXTURES TAKEN FROM MINECRAFT
  *
+ * BACKGROUNDS TAKEN FROM TERRARIA
+ *
  * MUSIC TAKEN FROM FASTER THAN LIGHT
  * ==============================*/
 import ddf.minim.*;
