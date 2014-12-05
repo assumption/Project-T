@@ -69,8 +69,6 @@ void setup() {
     if (row.getString("block") != null) blocks[row.getInt("y")][row.getInt("x")] = new Block(row.getString("block"));
   }
 
-  //generateTree(10, h-6);
-
   systems = new ArrayList<ParticleSystem>();
 }
 
@@ -181,7 +179,6 @@ void keyPressed() {
       index %= inventory.size();
     } else if (keyCode == CONTROL && devMode) {
       player.setVelocity(new PVector());
-      println((int)mouseY/blockLength);
       if ((int)mouseY/blockLength == 29) {
         if (blocks[29][(int)mouseX/blockLength] == null && blocks[28][(int)mouseX/blockLength] == null) {
           player.setLocation(new PVector((int)mouseX/blockLength * blockLength, 28 * blockLength));
