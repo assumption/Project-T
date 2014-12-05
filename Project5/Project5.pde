@@ -244,7 +244,7 @@ void keyPressed() {
     if (key == CODED) {
       if (keyCode == LEFT) {
         index -= 1;
-        if (index < 0) index += 6;
+        if (index < 0) index += inventory.size();
         index %= inventory.size();
       } else if (keyCode == RIGHT) {
         index += 1;
@@ -328,7 +328,7 @@ void mouseWheel(MouseEvent e)
     float count = e.getCount();
     float change = count/2;
     index += change;
-    if (index < 0) index += 5;
+    if (index < 0) index += inventory.size();
     index %= inventory.size();
   }
 }

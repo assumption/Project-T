@@ -88,6 +88,10 @@ y,x,block
 8,49,cobble
 9,37,wood
 9,38,wood
+9,39,dirt
+9,40,dirt
+9,41,dirt
+9,42,dirt
 9,43,dirt
 9,44,dirt
 9,45,dirt
@@ -97,8 +101,10 @@ y,x,block
 9,49,dirt
 10,37,wood
 10,38,wood
-10,41,grass
-10,42,grass
+10,39,dirt
+10,40,dirt
+10,41,dirt
+10,42,dirt
 10,43,dirt
 10,44,dirt
 10,45,dirt
@@ -108,8 +114,8 @@ y,x,block
 10,49,dirt
 11,37,wood
 11,38,wood
-11,39,grass
-11,40,grass
+11,39,dirt
+11,40,dirt
 11,41,dirt
 11,42,dirt
 11,43,dirt
