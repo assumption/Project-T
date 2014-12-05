@@ -1,3 +1,14 @@
+/***************************************************
+CREATED BY:
+   CARTER VAN DEUREN
+   ALEX CHAMBERLAIN
+   JAMES YANG
+   
+TEXTURES BORROWED FROM:
+   MINECRAFT
+   TERRARIA
+   MAPLESTORY
+***************************************************/
 import ddf.minim.*;
 
 Block[][] blocks;
