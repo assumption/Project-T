@@ -1,14 +1,11 @@
-class Particle
+class BlockParticle extends BaseParticle
 {
-  PVector location;
-  PVector velocity;
-  PVector acceleration;
-  color drawColor;
   int life; 
   
-  Particle(PVector loc, color c)
+  BlockParticle(PVector loc, color c)
   {
-    location = loc.get();
+    super(loc, c);
+    position = loc.get();
     velocity = new PVector(0,0);
     acceleration = new PVector(0,.5);
     drawColor = c;
@@ -17,7 +14,7 @@ class Particle
   
   void update()
   {
-    location.add(velocity);
+    position.add(velocity);
     velocity.add(acceleration);
     life -= 1;
   }
@@ -25,7 +22,7 @@ class Particle
   void draw()
   {
     pushMatrix();
-      translate(location.x,location.y);
+      translate(position.x,position.y);
       noStroke();
       fill(drawColor,(life > 3 ? 175 : life*175/3));
       rect(-1,-1,2,2);

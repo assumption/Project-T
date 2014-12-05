@@ -1,15 +1,14 @@
-class ParticleSystem
+class BlockParticleSystem extends BaseParticleSystem
 {
-  ArrayList<Particle> particles;
   PImage texture;
   PVector location;
   
-  ParticleSystem(int size, PVector loc, PImage tex)
+  BlockParticleSystem(int size, PVector loc, PImage tex)
   {
+    super(size, color(0,0));
     texture = tex.get();
     location = loc.get();
     
-    particles = new ArrayList<Particle>();
     texture.loadPixels();
     for (int i = 0; i < size; i++)
     {
@@ -18,15 +17,15 @@ class ParticleSystem
       int x = r % texture.width;
       int y = (int)r/texture.height;
       
-      particles.add(new Particle(new PVector(location.x+x,location.y+y), c));
+      particles.add(new BlockParticle(new PVector(location.x+x,location.y+y), c));
     }
   }
   
-  void update()
+  void run()
   {
     for (int i = particles.size()-1; i >= 0; i--)
     {
-      Particle p = particles.get(i);
+      BlockParticle p = (BlockParticle)particles.get(i);
       p.update();
       p.draw();
       if (p.isDead())
@@ -36,8 +35,8 @@ class ParticleSystem
     }
   }
   
-  boolean isDead()
+  boolean isAlive()
   {
-    return !(particles.size() > 0);
+    return (particles.size() > 0);
   }
 }

@@ -2,7 +2,7 @@ import ddf.minim.*;
 
 Block[][] blocks;
 Player player;
-ArrayList<ParticleSystem> systems;
+ArrayList<BaseParticleSystem> systems;
 
 //blocks available in inventory
 ArrayList<Block> inventory;
@@ -81,7 +81,8 @@ void setup() {
     if (row.getString("block") != null) blocks[row.getInt("y")][row.getInt("x")] = new Block(row.getString("block"));
   }
 
-  systems = new ArrayList<ParticleSystem>();
+  systems = new ArrayList<BaseParticleSystem>();
+  systems.add(new Snow(100, color(255)));
 }
 
 void draw()
@@ -102,7 +103,7 @@ void draw()
   
     //block placement/destroy
     if (devMode || distanceTo(mouseX, mouseY, player.getLocation().x + playerWidth / 2, player.getLocation().y + playerHeight / 2) < blockLength * 5) {
-      if (mouse1)
+      if (mouse1 && blocks[(int)mouseY/blockLength][(int)mouseX/blockLength] == null)
       {
         //place blocks, but make sure that they aren't placed on the character
         PVector location = player.getLocation();
@@ -114,9 +115,7 @@ void draw()
         int j2 = (int)(location.y + hitbox.y-1)/blockLength;
         int mx = (int)mouseX/blockLength;
         int my = (int)mouseY/blockLength;
-        boolean flag =  ((i0 == mx && (my == j0 || my == j1 || my == j2)) || (i1 == mx && (my == j0 || my == j1 || my == j2)));
-        flag = flag || (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length);
-        if (!flag) flag = blocks[my][mx] != null;
+        boolean flag =  ((i0 == mx && (my == j0 || my == j1 || my == j2)) || (i1 == mx && (my == j0 || my == j1 || my == j2))) || (my < 0 || my >= blocks.length || mx < 0 || mx >= blocks[0].length) ||  blocks[my][mx] != null;
         String type = inventory.get((int)index).getType();
         if (!flag && ((int)blockCount.get(type) != 0 || devMode)) 
         {
@@ -133,18 +132,18 @@ void draw()
         if (!flag)
         {
           PVector loc = player.getLocation();
-          systems.add(new ParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
+          systems.add(new BlockParticleSystem(10, new PVector(mx*blockLength, my*blockLength), blocks[my][mx].getTexture()));
           if (!devMode) blockCount.put(blocks[my][mx].getType(), (int)blockCount.get(blocks[my][mx].getType())+1);
           blocks[my][mx] = null;
         }
       }
     }
-    //render block destroy particles
+    //render particle systems
     for (int i = systems.size ()-1; i >= 0; i--)
     {
-      ParticleSystem s = systems.get(i);
-      s.update();
-      if (s.isDead())
+      BaseParticleSystem s = systems.get(i);
+      s.run();
+      if (!s.isAlive())
       {
         systems.remove(s);
       }
@@ -160,7 +159,7 @@ void draw()
         }
       }
     }
-  
+    
     //draw the inventory
     drawInventory();
   
