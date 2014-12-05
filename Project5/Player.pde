@@ -90,55 +90,56 @@ class Player
   {
     pushMatrix();
       pushMatrix();
-      translate(location.x+blockLength/2, location.y+blockLength/4);
-      scale(.35);
-      //back leg
-      pushMatrix();
-        translate(2, 62);
-        rotate(backL);
-        translate(0, 6);
-        image(leg, -12, -8);
-        //back feet
-        ellipse(3, 13, 15, 5);
-      popMatrix();
-    
-    
-      //back arm
-      pushMatrix();
-        translate(0, 30);//move into draw position
-        rotate(backA);
-        translate(0, -20);
-        image(arm, -17, 10);
-      popMatrix();
-    
-      //body
-      fill(#F2CA00);
-      image(body, -26, 0);
-      image(bottom, -16, 25);
-    
-      //head
-      pushMatrix();
-        image(face, -25, -35);
-      popMatrix();
-    
-      //front leg
-      pushMatrix();
-        translate(2, 62);
-        rotate(frontL);
-        translate(2, 6);
-        image(frontLeg, -18, -14);
-        //front feet
-        ellipse(-1, 13, 15, 5);
-      popMatrix();
-    
-      //front arm
-      pushMatrix();
-        translate(-20, 25);//move into draw position
-        rotate(frontA);
-        translate(0, -20);
-        image(weapon, 2, -10);
-        image(arm, -17, 10);
-      popMatrix();
+        translate(location.x+blockLength/2, location.y+blockLength/4);
+        scale(.35);
+        if (velocity.x < 0) scale(-1,1);
+        //back leg
+        pushMatrix();
+          translate(2, 62);
+          rotate(backL);
+          translate(0, 6);
+          image(leg, -12, -8);
+          //back feet
+          ellipse(3, 13, 15, 5);
+        popMatrix();
+      
+      
+        //back arm
+        pushMatrix();
+          translate(0, 30);//move into draw position
+          rotate(backA);
+          translate(0, -20);
+          image(arm, -17, 10);
+        popMatrix();
+      
+        //body
+        fill(#F2CA00);
+        image(body, -26, 0);
+        image(bottom, -16, 25);
+      
+        //head
+        pushMatrix();
+          image(face, -25, -35);
+        popMatrix();
+      
+        //front leg
+        pushMatrix();
+          translate(2, 62);
+          rotate(frontL);
+          translate(2, 6);
+          image(frontLeg, -18, -14);
+          //front feet
+          ellipse(-1, 13, 15, 5);
+        popMatrix();
+      
+        //front arm
+        pushMatrix();
+          translate(-20, 25);//move into draw position
+          rotate(frontA);
+          translate(0, -20);
+          image(weapon, 2, -10);
+          image(arm, -17, 10);
+        popMatrix();
       popMatrix();
       
       //hitbox
@@ -146,8 +147,7 @@ class Player
       fill(0);
       rect(0, 0, hitbox.x, hitbox.y);
       fill(255);
-      if (facingLeft) rect(hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);
-      else rect(3 * hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);*/
+      rect(hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);*/
     popMatrix();
   }
   
