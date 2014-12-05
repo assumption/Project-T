@@ -14,6 +14,9 @@ class Block {
     else if (type.equals("wood")) texture = loadImage("data/wood.png");
     else if (type.equals("leaf")) texture = loadImage("data/leaf.png");
     else if (type.equals("plank")) texture = loadImage("data/plank.png");
+    else if (type.equals("glass")) texture = loadImage("data/glass.png");
+    else if (type.equals("stone")) texture = loadImage("data/stone.png");
+    else if (type.equals("brick")) texture = loadImage("data/brick.png");
     texture.resize(blockLength, blockLength);
     snowCount = 0;
   }
@@ -27,6 +30,9 @@ class Block {
     else if (type.equals("wood")) texture = loadImage("data/wood.png");
     else if (type.equals("leaf")) texture = loadImage("data/leaf.png");
     else if (type.equals("plank")) texture = loadImage("data/plank.png");
+    else if (type.equals("glass")) texture = loadImage("data/glass.png");
+    else if (type.equals("stone")) texture = loadImage("data/stone.png");
+    else if (type.equals("brick")) texture = loadImage("data/brick.png");
     texture.resize((int)(blockLength*scale),(int)(blockLength*scale));
   }
   

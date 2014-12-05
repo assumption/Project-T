@@ -1,14 +1,3 @@
-/***************************************************
-CREATED BY:
-   CARTER VAN DEUREN
-   ALEX CHAMBERLAIN
-   JAMES YANG
-   
-TEXTURES BORROWED FROM:
-   MINECRAFT
-   TERRARIA
-   MAPLESTORY
-***************************************************/
 import ddf.minim.*;
 
 Block[][] blocks;
@@ -75,9 +64,12 @@ void setup() {
   inventory.add(new Block("grass", 2));
   inventory.add(new Block("dirt", 2));
   inventory.add(new Block("cobble", 2));
+  inventory.add(new Block("stone", 2));
   inventory.add(new Block("wood", 2));
-  inventory.add(new Block("leaf", 2));
   inventory.add(new Block("plank", 2));
+  inventory.add(new Block("leaf", 2));
+  inventory.add(new Block("glass", 2));
+  inventory.add(new Block("brick", 2));
 
   //inventory count
   blockCount = new HashMap<String, Integer>();

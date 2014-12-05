@@ -1,28 +1,16 @@
-class Player
+ class Player
 {
   PVector location;
   PVector hitbox;
   PVector velocity;
   PVector acceleration;
   boolean facingLeft;
-  
-  //variables from james's code
-  PImage bg;
-  PImage face;
-  PImage weapon;
-  PImage body;
-  PImage arm;
-  PImage frontLeg;
-  PImage leg;
-  PImage bottom;
-  
-  float backA, frontA, backL, frontL, backF, frontF;
-  
-  boolean armsMove = false;
-  boolean feetsMove = false;
-  boolean legsMove = false;
-  boolean animateCharacter = true;
-  //end variables
+  float leg1, leg2;
+  float v1, v2;
+  boolean brighter, turnBlue, turnGreen, turnRed, blink;
+  float colorV;
+  float hue;
+  float lastTime, randTime;
   
   Player(PVector loc, PVector box)
   { 
@@ -31,30 +19,18 @@ class Player
     hitbox = box.get();
     velocity = new PVector(0,0);
     acceleration = new PVector(0,0.5);
-    
-    //player textures
-    face = loadImage("data/EvanHead.png");
-    face.resize(55, 55);
-  
-    weapon = loadImage("data/weapon.png");
-    weapon.resize(60, 60);
-  
-    body = loadImage("data/body.png");
-    body.resize(55, 65);
-  
-    arm = loadImage("data/frontA.png");
-    arm.resize(40, 60);
-  
-  
-    leg = loadImage("data/leg.png");
-    leg.resize(20, 20);
-  
-    frontLeg = loadImage("data/leg.png");
-    frontLeg.resize(20, 30);
-  
-  
-    bottom = loadImage("data/bottom.png");
-    bottom.resize(60, 40);
+    leg1 = blockLength / 3 - 2.5;
+    leg2 = 2 * blockLength / 3 - 2.5;
+    v1 = 1;
+    v2 = -1;
+    brighter = true;
+    colorV = 0.5;
+    hue = 0;
+    turnBlue = true;
+    turnGreen = turnRed = false;
+    lastTime = millis();
+    randTime = random(1000, 5000);
+    blink = false;
   }
   
   void update()
@@ -62,8 +38,15 @@ class Player
     float xVel = velocity.x;
     float yVel = velocity.y;
     location.x += xVel;
-    if (xVel > 0) animateCR();
-    else if (xVel < 0) animateCL();
+    if (xVel != 0) {
+      leg1 += v1;
+      leg2 += v2;
+      if (leg1 > 2 * blockLength / 3 - 2.5 || leg1 < blockLength / 3 - 2.5) v1 *= -1;
+      if (leg2 > 2 * blockLength / 3 - 2.5 || leg2 < blockLength / 3 - 2.5) v2 *= -1;
+    } else {
+      leg1 = blockLength / 3 - 2.5;
+      leg2 = 2 * blockLength / 3 - 2.5; 
+    }
     if (collided() && xVel != 0)
     {
       xVel = xVel/abs(xVel);
@@ -84,70 +67,59 @@ class Player
       velocity.y = 0;
     }
     velocity.add(acceleration);
+    
+    if (brighter) hue += colorV;
+    else hue -= colorV;
+    if (hue > 100) brighter = false;
+    else if (hue < 0) {
+      brighter = true;
+      if (turnBlue) {
+        turnBlue = false;
+        turnGreen = true; 
+      } else if (turnGreen) {
+        turnGreen = false;
+        turnRed = true;
+      } else if (turnRed) {
+        turnRed = false;
+        turnBlue = true;
+      }
+    }
   }
   
   void draw()
   {
     pushMatrix();
+      translate(location.x, location.y);
+       if (turnBlue) fill(hue / 20, hue / 20, hue);
+      else if (turnGreen) fill(hue / 20, hue, hue / 20);
+      else if (turnRed) fill(hue, hue / 20, hue / 20);
       pushMatrix();
-        translate(location.x+blockLength/2, location.y+blockLength/4);
-        scale(.35);
-        if (velocity.x < 0) scale(-1,1);
-        //back leg
-        pushMatrix();
-          translate(2, 62);
-          rotate(backL);
-          translate(0, 6);
-          image(leg, -12, -8);
-          //back feet
-          ellipse(3, 13, 15, 5);
-        popMatrix();
-      
-      
-        //back arm
-        pushMatrix();
-          translate(0, 30);//move into draw position
-          rotate(backA);
-          translate(0, -20);
-          image(arm, -17, 10);
-        popMatrix();
-      
-        //body
-        fill(#F2CA00);
-        image(body, -26, 0);
-        image(bottom, -16, 25);
-      
-        //head
-        pushMatrix();
-          image(face, -25, -35);
-        popMatrix();
-      
-        //front leg
-        pushMatrix();
-          translate(2, 62);
-          rotate(frontL);
-          translate(2, 6);
-          image(frontLeg, -18, -14);
-          //front feet
-          ellipse(-1, 13, 15, 5);
-        popMatrix();
-      
-        //front arm
-        pushMatrix();
-          translate(-20, 25);//move into draw position
-          rotate(frontA);
-          translate(0, -20);
-          image(weapon, 2, -10);
-          image(arm, -17, 10);
-        popMatrix();
+        translate(leg1, 0);
+        rect(0, 0, 5, hitbox.y);
       popMatrix();
-      
-      //hitbox
-      /*translate(location.x,location.y);
-      fill(0);
-      rect(0, 0, hitbox.x, hitbox.y);
-      fill(255);
-      rect(hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);*/
+      pushMatrix();
+        translate(leg2, 0);
+        rect(0, 0, 5, hitbox.y);
+      popMatrix();
+      rect(0, 0, hitbox.x, hitbox.y - 5);
+      if (!blink) fill(255);
+      else {
+        if (turnBlue) fill(hue / 20, hue / 20, hue);
+        else if (turnGreen) fill(hue / 20, hue, hue / 20);
+        else if (turnRed) fill(hue, hue / 20, hue / 20);
+        if (millis() - lastTime > 100) {
+          blink = false;
+          lastTime = millis();
+          randTime = random(1000, 5000); 
+        }
+      }
+      if (millis() - lastTime > randTime) {
+        lastTime = millis();
+        randTime = 900000001; // lol ghetto coding
+        blink = true;
+      }
+      if (facingLeft) rect(hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);
+      else rect(3 * hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);
     popMatrix();
   }
   
@@ -162,116 +134,6 @@ class Player
     if (i0 < 0 || j0 < 0) return true;
     if (i1 >= blocks[0].length || j2 >= blocks.length) return true;
     return !(blocks[j0][i0] == null && blocks[j0][i1] == null && blocks[j1][i0] == null && blocks[j1][i1] == null && blocks[j2][i0] == null && blocks[j2][i1] == null);
-  }
-  
-  //walks right
-  void animateCR()
-  {
-    //front arm animates
-    if (frontA < -1) {
-      armsMove = true;
-    } else if (frontA > 0) {
-      armsMove = false;
-    }
-  
-    if (armsMove) {
-      frontA += .06;
-    } else {
-      frontA -= .06;
-    }
-  
-    //back arm animates
-    if (backA > 0) {
-      armsMove = true;
-    } else if (backA < -1) {
-      armsMove = false;
-    }
-  
-    if (armsMove) {
-      backA -= .04;
-    } else {
-      backA += .04;
-    }
-  
-    //front legs animate
-    if (frontL < -1) {
-      legsMove = true;
-    } else if (frontL > .4) {
-      legsMove = false;
-    }
-    if (legsMove) {
-      frontL += .08;
-    } else {
-      frontL -= .08;
-    }
-  
-    //back arm animates
-    if (backL > .4) {
-      feetsMove = true;
-    } else if (backL < -1) {
-      feetsMove = false;
-    }
-  
-    if (feetsMove) {
-      backL -= .076;
-    } else {
-      backL += .076;
-    }
-  }
-
-  //walks left
-  void animateCL()
-  {
-    //front arm animates
-    if (frontA < -1) {
-      armsMove = true;
-    } else if (frontA > 0) {
-      armsMove = false;
-    }
-  
-    if (armsMove) {
-      frontA += .06;
-    } else {
-      frontA -= .06;
-    }
-  
-    //back arm animates
-    if (backA > 0) {
-      armsMove = true;
-    } else if (backA < -1) {
-      armsMove = false;
-    }
-  
-    if (armsMove) {
-      backA -= .04;
-    } else {
-      backA += .04;
-    }
-  
-    //front legs animate
-    if (frontL < -1) {
-      legsMove = true;
-    } else if (frontL > .4) {
-      legsMove = false;
-    }
-    if (legsMove) {
-      frontL += .08;
-    } else {
-      frontL -= .08;
-    }
-  
-    //back arm animates
-    if (backL > .4) {
-      feetsMove = true;
-    } else if (backL < -1) {
-      feetsMove = false;
-    }
-  
-    if (feetsMove) {
-      backL -= .074;
-    } else {
-      backL += .074;
-    }
   }
   
   //getters and setters
