@@ -150,8 +150,13 @@ float distanceTo(float x1, float y1, float x2, float y2) {
 void keyPressed() {
   if (gameScreen == 3)
   {
-    if (key == 'a') player.setHSpeed(-2);
-    else if (key == 'd') player.setHSpeed(2);
+    if (key == 'a') {
+      player.setHSpeed(-2);
+      player.facingLeft = true;
+    } else if (key == 'd') {
+      player.setHSpeed(2);
+      player.facingLeft = false;
+    }
     if (key == '`') devMode = !devMode;
     if (key == BACKSPACE) saveMap();
     if (key == 'w')

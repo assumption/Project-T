@@ -4,9 +4,11 @@ class Player
   PVector hitbox;
   PVector velocity;
   PVector acceleration;
+  boolean facingLeft;
   
   Player(PVector loc, PVector box)
-  {
+  { 
+    facingLeft = true;
     location = loc.get();
     hitbox = box.get();
     velocity = new PVector(0,0);
@@ -46,6 +48,9 @@ class Player
       translate(location.x, location.y);
       fill(0);
       rect(0, 0, hitbox.x, hitbox.y);
+      fill(255);
+      if (facingLeft) rect(hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);
+      else rect(3 * hitbox.x / 10, hitbox.y / 10, 6 * hitbox.x / 10, hitbox.y / 5);
     popMatrix();
   }
   
