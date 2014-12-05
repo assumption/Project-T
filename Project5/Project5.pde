@@ -179,9 +179,9 @@ void keyPressed() {
     } else if (keyCode == RIGHT) {
       index += 1;
       index %= inventory.size();
-    } else if (keyCode == CONTROL && devMode) {
+    } else if (keyCode == CONTROL && devMode && blocks[(int)mouseY/blockLength][(int)mouseX/blockLength] == null && blocks[(int)mouseY/blockLength + 1][(int)mouseX/blockLength] == null) {
       player.setVelocity(new PVector());
-      player.setLocation(new PVector(mouseX, mouseY));
+      player.setLocation(new PVector((int)mouseX/blockLength * blockLength, mouseY/blockLength * blockLength));
     }
   }
 }
