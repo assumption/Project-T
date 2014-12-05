@@ -179,9 +179,22 @@ void keyPressed() {
     } else if (keyCode == RIGHT) {
       index += 1;
       index %= inventory.size();
-    } else if (keyCode == CONTROL && devMode && blocks[(int)mouseY/blockLength][(int)mouseX/blockLength] == null && blocks[(int)mouseY/blockLength + 1][(int)mouseX/blockLength] == null) {
+    } else if (keyCode == CONTROL && devMode) {
       player.setVelocity(new PVector());
-      player.setLocation(new PVector((int)mouseX/blockLength * blockLength, mouseY/blockLength * blockLength));
+      println((int)mouseY/blockLength);
+      if ((int)mouseY/blockLength == 29) {
+        if (blocks[29][(int)mouseX/blockLength] == null && blocks[28][(int)mouseX/blockLength] == null) {
+          player.setLocation(new PVector((int)mouseX/blockLength * blockLength, 28 * blockLength));
+        }
+      } else if (blocks[(int)mouseY/blockLength][(int)mouseX/blockLength] == null && blocks[(int)mouseY/blockLength + 1][(int)mouseX/blockLength] == null) {
+        player.setLocation(new PVector((int)mouseX/blockLength * blockLength, mouseY/blockLength * blockLength));
+      } else if ((int)mouseY/blockLength == 0) {
+        if (blocks[0][(int)mouseX/blockLength] == null && blocks[1][(int)mouseX/blockLength] == null) {
+          player.setLocation(new PVector((int)mouseX/blockLength * blockLength, mouseY/blockLength * blockLength));
+        }
+      } else if (blocks[(int)mouseY/blockLength][(int)mouseX/blockLength] == null && blocks[(int)mouseY/blockLength + 1][(int)mouseX/blockLength] != null && blocks[(int)mouseY/blockLength - 1][(int)mouseX/blockLength] == null) {
+         player.setLocation(new PVector((int)mouseX/blockLength * blockLength, (mouseY/blockLength - 1) * blockLength));
+      }
     }
   }
 }
