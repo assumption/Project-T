@@ -12,7 +12,7 @@ float index;
 int blockLength;
 float playerHeight;
 int playerWidth;
-PImage background, titleScreen, playButton, playButton2;
+PImage background, titleScreen, playButton, playButton2, grass;
 
 PVector loc;
 PVector vel;
@@ -41,6 +41,9 @@ void setup() {
   playButton.resize(200, 150);
   playButton2 = loadImage("data/playButton2.png");
   playButton2.resize(200, 150);
+  
+  grass = loadImage("data/grass.png");
+  grass.resize(blockLength, blockLength);
   
   minim = new Minim(this);
   main = minim.loadFile("data/mainmenu.wav");
@@ -150,7 +153,11 @@ void draw()
     //render blocks
     for (int i = 0; i < blocks.length; i++) {
       for (int j = 0; j < blocks[0].length; j++) {
-        if (blocks[i][j] != null) image(blocks[i][j].texture, j * blockLength, i * blockLength);
+        if (blocks[i][j] != null) {
+          if (blocks[i][j].type.equals("dirt") && millis() - blocks[i][j].life > blocks[i][j].conversionTime && i != 0 && blocks[i - 1][j] == null) blocks[i][j].texture = grass;
+          else if (blocks[i][j].type.equals("dirt") && millis() - blocks[i][j].life > blocks[i][j].conversionTime && i == 0) blocks[i][j].texture = grass;
+          image(blocks[i][j].texture, j * blockLength, i * blockLength);
+        }
       }
     }
   

@@ -2,6 +2,8 @@ class Block {
   
   PImage texture;
   String type;
+  int life;
+  float conversionTime;
   
   Block(String blockType) {
     type = blockType;
@@ -12,6 +14,8 @@ class Block {
     else if (type.equals("leaf")) texture = loadImage("data/leaf.png");
     else if (type.equals("plank")) texture = loadImage("data/plank.png");
     texture.resize(blockLength, blockLength);
+    life = millis();
+    conversionTime = random(20000, 40000);
   }
   
   Block(String blockType, float scale)
